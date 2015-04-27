@@ -12,7 +12,7 @@ function start_chromium {
 }
 
 function start_impress {
-        rm -rf libreoffice/ .recently-used 
+        rm -rf libreoffice/ .recently-used
         start_ui
         cd ${USB_STICK}
         libreoffice -show $1
@@ -21,6 +21,11 @@ function start_impress {
 function start_pdf {
         cd ${USB_STICK}
         impressive -a 10 -w $1
+}
+
+function start_video {
+        cd ${USB_STICK}
+        
 }
 
 function wait_for_network {
@@ -79,5 +84,11 @@ while true; do
        then
           start_pdf $(grep start_pdf ${CONFIG_FILE} | sed "s/start_pdf=//")
        fi
-        
+
+       grep ^start_pdf ${CONFIG_FILE} >> /dev/null
+       if [ $? -eq 0 ]
+       then
+          start_video grep start_pdf ${CONFIG_FILE} | sed "s/start_pdf=//")
+       fi
+
 done;
