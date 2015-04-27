@@ -25,7 +25,7 @@ function start_pdf {
 
 function start_video {
         cd ${USB_STICK}
-        
+        omxplayer -o both $1
 }
 
 function wait_for_network {
@@ -85,10 +85,10 @@ while true; do
           start_pdf $(grep start_pdf ${CONFIG_FILE} | sed "s/start_pdf=//")
        fi
 
-       grep ^start_pdf ${CONFIG_FILE} >> /dev/null
+       grep ^start_video ${CONFIG_FILE} >> /dev/null
        if [ $? -eq 0 ]
        then
-          start_video grep start_pdf ${CONFIG_FILE} | sed "s/start_pdf=//")
+          start_video grep start_video ${CONFIG_FILE} | sed "s/start_video=//")
        fi
 
 done;
