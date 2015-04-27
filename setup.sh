@@ -14,8 +14,8 @@ function enable_ssh {
 
 function install_packages {
   sudo apt-get update
-  sudo apt-get dist-upgrade
-  sudo apt-get install matchbox chromium x11-xserver-utils ttf-mscorefonts-installer xwit sqlite3 libnss3 libreoffice-impress impressive
+  sudo apt-get -y dist-upgrade
+  sudo apt-get -y install matchbox chromium x11-xserver-utils ttf-mscorefonts-installer xwit sqlite3 libnss3 libreoffice-impress impressive
 }
 
 function set_config {
@@ -31,6 +31,14 @@ function set_xinitrc {
   cat xinitrc > /boot/xinitrc
 }
 
+function set_network {
+  cat interfaces > /etc/network/interfaces
+}
+
+function set_fstab {
+  cat fstab > /etc/fstab
+}
+
 function wait_for_network {
   echo "##### Wait for network"
   IP=$(ip route | awk '/default/ { print $3 }')
@@ -42,9 +50,9 @@ function wait_for_network {
 }
 
 function check_version {
-  export LATEST_VERSION=`curl ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
+  export LATEST_VERSION=`curl -s ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
   export CURRENT_VERSION=`cat /etc/presenter_version`
-  if [ $CURRENT_VERSION == $LATEST_VERSION ]
+  if [ -e /etc/presenter_version ] && [ $CURRENT_VERSION == $LATEST_VERSION ]
   then
     echo "Nothing to do here..."
     exit 0
@@ -52,18 +60,24 @@ function check_version {
 }
 
 function download_release {
-  wget -o presenter-release.tar.gz ${RELEASE_URL}
+  RELEASE_URL=`curl -s ${LATEST_URL} | grep tarball_url | sed "s/.*: \"//" | sed "s/\",//"`
+  wget -O presenter-release.tar.gz ${RELEASE_URL}
   tar -xvzf presenter-release.tar.gz
-  cd presenter-release
+  cd *-presenter-pi-*
   echo $LATEST_VERSION > /etc/presenter_version
 }
 
 
 wait_for_network
 check_version
+download_release
 disable_boot_to_ui
 enable_ssh
 install_packages
+set_network
+set_fstab
 set_config
 set_xinitrc
 set_rc_local
+
+# Setup update (cron) job
