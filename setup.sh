@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export RELEASE_URL="https://"
+export LATEST_URL="https://api.github.com/repos/joek/presenter-pi/releases/latest"
 
 function disable_boot_to_ui {
   sudo update-rc.d lightdm disable 2
@@ -19,36 +19,48 @@ function install_packages {
 }
 
 function set_config {
-  cat config.txt >> /boot/config.txt
+  cat config.txt > /boot/config.txt
 }
 
 function set_rc_local {
-  cat rc.local >> /etc/rc.local
+  cat rc.local > /etc/rc.local
 }
 
 
 function set_xinitrc {
-  cat xinitrc >> /boot/xinitrc
+  cat xinitrc > /boot/xinitrc
 }
 
 function wait_for_network {
-        echo "##### Wait for network"
-        IP=$(ip route | awk '/default/ { print $3 }')
-        while ( ! ping -c1 $IP >/dev/null 2>&1 ); do
-            echo "Network not connected"
-            sleep 5
-            IP=$(ip route | awk '/default/ { print $3 }')
-        done
+  echo "##### Wait for network"
+  IP=$(ip route | awk '/default/ { print $3 }')
+  while ( ! ping -c1 $IP >/dev/null 2>&1 ); do
+    echo "Network not connected"
+    sleep 5
+    IP=$(ip route | awk '/default/ { print $3 }')
+  done
+}
+
+function check_version {
+  export LATEST_VERSION=`curl ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
+  export CURRENT_VERSION=`cat /etc/presenter_version`
+  if [ $CURRENT_VERSION == $LATEST_VERSION ]
+  then
+    echo "Nothing to do here..."
+    exit 0
+  fi
 }
 
 function download_release {
   wget -o presenter-release.tar.gz ${RELEASE_URL}
   tar -xvzf presenter-release.tar.gz
   cd presenter-release
+  echo $LATEST_VERSION > /etc/presenter_version
 }
 
 
 wait_for_network
+check_version
 disable_boot_to_ui
 enable_ssh
 install_packages
