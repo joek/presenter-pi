@@ -19,16 +19,26 @@ function install_packages {
 }
 
 function set_config {
-
+  cat config.txt >> /boot/config.txt
 }
 
 function set_rc_local {
-
+  cat rc.local >> /etc/rc.local
 }
 
 
 function set_xinitrc {
+  cat xinitrc >> /boot/xinitrc
+}
 
+function wait_for_network {
+        echo "##### Wait for network"
+        IP=$(ip route | awk '/default/ { print $3 }')
+        while ( ! ping -c1 $IP >/dev/null 2>&1 ); do
+            echo "Network not connected"
+            sleep 5
+            IP=$(ip route | awk '/default/ { print $3 }')
+        done
 }
 
 function download_release {
@@ -36,3 +46,12 @@ function download_release {
   tar -xvzf presenter-release.tar.gz
   cd presenter-release
 }
+
+
+wait_for_network
+disable_boot_to_ui
+enable_ssh
+install_packages
+set_config
+set_xinitrc
+set_rc_local
