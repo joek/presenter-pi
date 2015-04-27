@@ -60,6 +60,7 @@ function check_version {
 }
 
 function download_release {
+  rm -rf *-presenter-pi-*
   RELEASE_URL=`curl -s ${LATEST_URL} | grep tarball_url | sed "s/.*: \"//" | sed "s/\",//"`
   wget -O presenter-release.tar.gz ${RELEASE_URL}
   tar -xvzf presenter-release.tar.gz
@@ -79,5 +80,6 @@ set_fstab
 set_config
 set_xinitrc
 set_rc_local
-
 # Setup update (cron) job
+
+reboot

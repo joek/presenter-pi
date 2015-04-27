@@ -88,7 +88,7 @@ while true; do
        grep ^start_video ${CONFIG_FILE} >> /dev/null
        if [ $? -eq 0 ]
        then
-          start_video grep start_video ${CONFIG_FILE} | sed "s/start_video=//")
+          start_video $(grep start_video ${CONFIG_FILE} | sed "s/start_video=//")
        fi
 
 done;
