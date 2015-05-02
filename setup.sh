@@ -52,8 +52,8 @@ function wait_for_network {
 
 
 function set_crontab {
-  chmod a+x setup.sh
-  echo "*/10 *    * * * root $(pwd)/setup.sh" >> /etc/cron.d/vcp-setup
+  chmod a+x download.sh
+  echo "*/10 *    * * * root $(pwd)/download.sh" >> /etc/cron.d/vcp-setup
 }
 
 wait_for_network
