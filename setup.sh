@@ -49,29 +49,14 @@ function wait_for_network {
   done
 }
 
-function check_version {
-  export LATEST_VERSION=`curl -s ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
-  export CURRENT_VERSION=`cat /etc/presenter_version`
-  if [ -e /etc/presenter_version ] && [ $CURRENT_VERSION == $LATEST_VERSION ]
-  then
-    echo "Nothing to do here..."
-    exit 0
-  fi
-}
 
-function download_release {
-  rm -rf *-presenter-pi-*
-  RELEASE_URL=`curl -s ${LATEST_URL} | grep tarball_url | sed "s/.*: \"//" | sed "s/\",//"`
-  wget -O presenter-release.tar.gz ${RELEASE_URL}
-  tar -xvzf presenter-release.tar.gz
-  cd *-presenter-pi-*
-  echo $LATEST_VERSION > /etc/presenter_version
-}
 
+function set_crontab {
+  chmod a+x setup.sh
+  echo "*/10 *    * * * root $(pwd)/setup.sh" >> /etc/cron.d/vcp-setup
+}
 
 wait_for_network
-check_version
-download_release
 disable_boot_to_ui
 enable_ssh
 install_packages
@@ -80,6 +65,5 @@ set_fstab
 set_config
 set_xinitrc
 set_rc_local
-# Setup update (cron) job
-
+set_crontab
 reboot
