@@ -68,4 +68,4 @@ set_config
 set_xinitrc
 set_rc_local
 set_crontab
-reboot
+shutdown -r now
