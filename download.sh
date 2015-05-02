@@ -4,6 +4,7 @@ export LATEST_URL="https://api.github.com/repos/joek/presenter-pi/releases/lates
 
 
 function check_version {
+  echo "##### Check version"
   export LATEST_VERSION=`curl -s ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
   export CURRENT_VERSION=`cat /etc/presenter_version`
   if [ -e /etc/presenter_version ] && [ $CURRENT_VERSION == $LATEST_VERSION ]
@@ -14,6 +15,7 @@ function check_version {
 }
 
 function download_release {
+  echo "##### Download release"
   rm -rf *-presenter-pi-*
   RELEASE_URL=`curl -s ${LATEST_URL} | grep tarball_url | sed "s/.*: \"//" | sed "s/\",//"`
   wget -O presenter-release.tar.gz ${RELEASE_URL}
