@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export LATEST_URL="https://api.github.com/repos/joek/presenter-pi/releases/latest"
 
 function disable_boot_to_ui {
   sudo update-rc.d lightdm disable 2

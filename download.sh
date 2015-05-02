@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export LATEST_URL="https://api.github.com/repos/joek/presenter-pi/releases/latest"
+
+
 function check_version {
   export LATEST_VERSION=`curl -s ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
   export CURRENT_VERSION=`cat /etc/presenter_version`
@@ -18,6 +21,7 @@ function download_release {
   cd *-presenter-pi-*
   chmod a+x setup.sh
   echo $LATEST_VERSION > /etc/presenter_version
+  ./setup.sh
 }
 
 
@@ -29,11 +33,10 @@ function wait_for_network {
     sleep 5
     IP=$(ip route | awk '/default/ { print $3 }')
   done
-  ./setup.sh
 }
 
 
-
+cd ~
 wait_for_network
 check_version
 download_release
