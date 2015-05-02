@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function check_version {
   export LATEST_VERSION=`curl -s ${LATEST_URL} | grep tag_name | sed "s/.*: \"//" | sed "s/\",//"`
   export CURRENT_VERSION=`cat /etc/presenter_version`
