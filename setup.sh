@@ -35,6 +35,7 @@ function set_network {
 }
 
 function set_fstab {
+  mkdir -p /mnt/USB
   cat fstab > /etc/fstab
 }
 
