@@ -55,6 +55,8 @@ function set_crontab {
   echo "*/10 *    * * * root $(pwd)/download.sh" >> /etc/cron.d/vcp-setup
 }
 
+
+echo "Setup.sh"
 wait_for_network
 disable_boot_to_ui
 enable_ssh
